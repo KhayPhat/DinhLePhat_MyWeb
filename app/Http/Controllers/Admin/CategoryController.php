@@ -39,6 +39,16 @@ class CategoryController extends Controller
                     margin-bottom: 20px;
                 }
 
+                .btn-add{
+                    display:inline-block;
+                    padding:10px 15px;
+                    background:#16a34a;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:5px;
+                    margin-bottom:20px;
+                }
+
                 table{
                     width: 100%;
                     border-collapse: collapse;
@@ -67,6 +77,17 @@ class CategoryController extends Controller
 
                 <h1>Danh sách Category</h1>
 
+                <a class="btn-add" href="/admin/categories/create">
+                    + Thêm Category
+                </a>
+                <a class="btn-add"
+   href="/admin/dashboard"
+   style="background:#64748b; margin-left:10px;">
+
+    Quay lại Dashboard
+
+</a>
+
                 <table>
 
                     <tr>
@@ -75,6 +96,7 @@ class CategoryController extends Controller
                         <th>Slug</th>
                         <th>Hình ảnh</th>
                         <th>Trạng thái</th>
+                        <th>Chức năng</th>
                     </tr>
         ';
 
@@ -87,6 +109,46 @@ class CategoryController extends Controller
                     <td>'.$item->slug.'</td>
                     <td>'.$item->image.'</td>
                     <td>'.$item->status.'</td>
+
+<td>
+
+    <a href="/admin/categories/'.$item->cateid.'/edit"
+       style="
+            background:orange;
+            color:white;
+            padding:6px 10px;
+            text-decoration:none;
+            border-radius:4px;
+            margin-right:5px;
+       ">
+        Sửa
+    </a>
+
+    <form method="POST"
+          action="/admin/categories/'.$item->cateid.'"
+          onsubmit="return confirm(\'Bạn có chắc muốn xóa?\')"
+          style="display:inline;">
+
+        <input type="hidden" name="_token" value="'.csrf_token().'">
+
+        <input type="hidden" name="_method" value="DELETE">
+
+        <button type="submit" style="
+            background:red;
+            color:white;
+            border:none;
+            padding:6px 10px;
+            cursor:pointer;
+            border-radius:4px;
+        ">
+            Xóa
+        </button>
+
+    </form>
+
+</td>
+    </form>
+</td>
                 </tr>
             ';
         }
@@ -106,48 +168,224 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return "Trang thêm category";
-    }
+public function create()
+{
+    return '
+    <html>
+    <head>
+        <title>Thêm Category</title>
+
+        <style>
+            body{
+                font-family: Arial, sans-serif;
+                background:#f1f5f9;
+                padding:30px;
+            }
+
+            .container{
+                max-width:600px;
+                margin:auto;
+                background:white;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            input{
+                width:100%;
+                padding:10px;
+                margin-top:5px;
+                margin-bottom:15px;
+                box-sizing:border-box;
+            }
+
+            .btn{
+                padding:10px 15px;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+                text-decoration:none;
+                display:inline-block;
+            }
+
+            .btn-save{
+                background:#2563eb;
+                color:white;
+            }
+
+            .btn-back{
+                background:#64748b;
+                color:white;
+                margin-left:10px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h2>Thêm Category</h2>
+
+            <form method="POST" action="/admin/categories">
+
+                <input type="hidden" name="_token" value="'.csrf_token().'">
+
+                <label>Tên danh mục</label>
+                <input type="text" name="catename" required>
+
+                <label>Slug</label>
+                <input type="text" name="slug" required>
+
+                <button type="submit" class="btn btn-save">
+                    Lưu
+                </button>
+
+                <a href="/admin/categories" class="btn btn-back">
+                    Quay lại
+                </a>
+
+            </form>
+
+        </div>
+
+    </body>
+    </html>
+    ';
+}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        return "Lưu category thành công";
-    }
+ public function store(Request $request)
+{
+    DB::table('categories')->insert([
+        'catename' => $request->catename,
+        'slug' => $request->slug,
+        'image' => null,
+        'status' => 1,
+        'sort_order' => 0,
+        'description' => null,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
 
-    /**
-     * Display the specified resource.
-     */
+    return redirect('/admin/categories');
+}
+
     public function show(string $id)
     {
         return "Chi tiết category: " . $id;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        return "Sửa category: " . $id;
-    }
+public function edit(string $id)
+{
+    $category = DB::table('categories')
+        ->where('cateid', $id)
+        ->first();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        return "Cập nhật category: " . $id;
-    }
+    return '
+    <html>
+    <head>
+        <title>Sửa Category</title>
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        return "Xóa category: " . $id;
-    }
+        <style>
+            body{
+                font-family: Arial, sans-serif;
+                background:#f1f5f9;
+                padding:30px;
+            }
+
+            .container{
+                max-width:600px;
+                margin:auto;
+                background:white;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            input{
+                width:100%;
+                padding:10px;
+                margin-top:5px;
+                margin-bottom:15px;
+                box-sizing:border-box;
+            }
+
+            .btn{
+                padding:10px 15px;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+                text-decoration:none;
+                display:inline-block;
+            }
+
+            .btn-save{
+                background:#2563eb;
+                color:white;
+            }
+
+            .btn-back{
+                background:#64748b;
+                color:white;
+                margin-left:10px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h2>Sửa Category</h2>
+
+            <form method="POST" action="/admin/categories/'.$id.'">
+
+                <input type="hidden" name="_token" value="'.csrf_token().'">
+                <input type="hidden" name="_method" value="PUT">
+
+                <label>Tên danh mục</label>
+                <input type="text" name="catename" value="'.$category->catename.'" required>
+
+                <label>Slug</label>
+                <input type="text" name="slug" value="'.$category->slug.'" required>
+
+                <button type="submit" class="btn btn-save">
+                    Cập nhật
+                </button>
+
+                <a href="/admin/categories" class="btn btn-back">
+                    Quay lại
+                </a>
+
+            </form>
+
+        </div>
+
+    </body>
+    </html>
+    ';
+}
+
+public function update(Request $request, string $id)
+{
+    DB::table('categories')
+        ->where('cateid', $id)
+        ->update([
+            'catename' => $request->catename,
+            'slug' => $request->slug,
+            'updated_at' => now()
+        ]);
+
+    return redirect('/admin/categories');
+}
+
+public function destroy(string $id)
+{
+    DB::table('categories')
+        ->where('cateid', $id)
+        ->delete();
+
+    return redirect('/admin/categories');
+}
 }

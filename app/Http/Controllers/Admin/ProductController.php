@@ -4,32 +4,310 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+public function index()
+{
+$products = DB::table('products')
+    ->join('categories', 'products.cateid', '=', 'categories.cateid')
+    ->leftJoin('brands', 'products.brandid', '=', 'brands.id') 
+    ->select(
+        'products.id',
+        'products.productname',
+        'products.price',
+        'categories.catename',
+        'brands.brandname'
+    )
+    ->get();
+
+    $html = '
+    <html>
+    <head>
+        <title>Danh sách Product</title>
+        
+
+        <style>
+            body{
+                font-family: Arial;
+                background:#f1f5f9;
+                padding:30px;
+            }
+
+            .container{
+                max-width:1200px;
+                margin:auto;
+                background:white;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            table{
+                width:100%;
+                border-collapse:collapse;
+            }
+
+            th, td{
+                border:1px solid #ccc;
+                padding:10px;
+            }
+
+            th{
+                background:#2563eb;
+                color:white;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h1>Danh sách Product</h1>
+            
+<a 
+    href="/admin/products/create"
+    style="
+        display:inline-block;
+        padding:10px 15px;
+        background:#16a34a;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+        margin-bottom:20px;
+    "
+>
+    + Thêm Product
+</a>
+<a class="btn-add"
+   href="/admin/dashboard"
+   style="background:#64748b; margin-inline-start:10px;">
+    Quay lại Dashboard
+
+</a>
+
+            <table>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Category</th>
+                    <th>Brand</th>
+                    <th>Chức năng</th>
+                </tr>
+    ';
+
+    foreach($products as $item){
+
+        $html .= '
+            <tr>
+                <td>'.$item->id.'</td>
+                <td>'.$item->productname.'</td>
+                <td>'.$item->price.'</td>
+                <td>'.$item->catename.'</td>
+                <td>'.$item->brandname.'</td>
+                <td>
+    <a
+        href="/admin/products/'.$item->id.'/edit"
+        style="
+            background:#eab308;
+            color:white;
+            padding:6px 10px;
+            text-decoration:none;
+            border-radius:5px;
+        "
+    >
+        Sửa
+    </a>
+    <form 
+    method="POST"
+    action="/admin/products/'.$item->id.'"
+    style="display:inline-block;"
+>
+
+    <input type="hidden"
+           name="_token"
+           value="'.csrf_token().'">
+
+    <input type="hidden"
+           name="_method"
+           value="DELETE">
+
+    <button
+        type="submit"
+        style="
+            background:#dc2626;
+            color:white;
+            padding:6px 10px;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        "
+    >
+        Xóa
+    </button>
+
+</form>
+</td>
+            </tr>
+        ';
     }
+
+    $html .= '
+            </table>
+
+        </div>
+
+    </body>
+    </html>
+    ';
+
+    return $html;
+}
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+public function create()
+{
+    $categories = DB::table('categories')->get();
+    $brands = DB::table('brands')->get();
+
+    $html = '
+    <html>
+    <head>
+        <title>Thêm Product</title>
+
+        <style>
+            body{
+                font-family: Arial;
+                background:#f1f5f9;
+                padding:30px;
+            }
+
+            .container{
+                max-width:700px;
+                margin:auto;
+                background:white;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            input, select{
+                width:100%;
+                padding:10px;
+                margin-top:5px;
+                margin-bottom:15px;
+                box-sizing:border-box;
+            }
+
+            .btn{
+                background:#2563eb;
+                color:white;
+                padding:10px 15px;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h2>Thêm Product</h2>
+
+            <form method="POST" action="/admin/products">
+
+                <input type="hidden"
+                       name="_token"
+                       value="'.csrf_token().'">
+
+                <label>Tên sản phẩm</label>
+                <input type="text" name="productname">
+
+                <label>Giá</label>
+                <input type="text" name="price">
+
+                <label>Category</label>
+
+                <select name="cateid">
+    ';
+
+    foreach($categories as $cate){
+
+        $html .= '
+            <option value="'.$cate->cateid.'">
+                '.$cate->catename.'
+            </option>
+        ';
     }
+
+    $html .= '
+                </select>
+
+                <label>Brand</label>
+
+                <select name="brandid">
+    ';
+
+    foreach($brands as $brand){
+
+        $html .= '
+            <option value="'.$brand->id.'">
+                '.$brand->brandname.'
+            </option>
+        ';
+    }
+
+    $html .= '
+                </select>
+
+                <button type="submit" class="btn">
+                    Lưu Product
+                </button>
+                <a class="btn-add"
+   href="/admin/dashboard"
+   style="background:#64748b; margin-left:10px;">
+
+    Quay lại 
+
+</a>
+
+            </form>
+
+        </div>
+
+    </body>
+    </html>
+    ';
+
+    return $html;
+}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+public function store(Request $request)
+{
+    DB::table('products')->insert([
+
+        'productname' => $request->productname,
+        'price' => $request->price,
+        'cateid' => $request->cateid,
+        'brandid' => $request->brandid,
+        'created_at' => now()
+
+    ]);
+
+    return redirect('/admin/products');
+}
 
     /**
      * Display the specified resource.
@@ -42,24 +320,169 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
+public function edit(string $id)
+{
+    $product = DB::table('products')
+        ->where('id', $id)
+        ->first();
+
+    $categories = DB::table('categories')->get();
+    $brands = DB::table('brands')->get();
+
+    $html = '
+    <html>
+    <head>
+        <title>Sửa Product</title>
+
+        <style>
+            body{
+                font-family: Arial;
+                background:#f1f5f9;
+                padding:30px;
+            }
+
+            .container{
+                max-width:700px;
+                margin:auto;
+                background:white;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            input, select{
+                width:100%;
+                padding:10px;
+                margin-top:5px;
+                margin-bottom:15px;
+                box-sizing:border-box;
+            }
+
+            .btn{
+                background:#2563eb;
+                color:white;
+                padding:10px 15px;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h2>Sửa Product</h2>
+
+            <form method="POST" action="/admin/products/'.$product->id.'">
+
+                <input type="hidden"
+                       name="_token"
+                       value="'.csrf_token().'">
+
+                <input type="hidden"
+                       name="_method"
+                       value="PUT">
+
+                <label>Tên sản phẩm</label>
+                <input type="text"
+                       name="productname"
+                       value="'.$product->productname.'">
+
+                <label>Giá</label>
+                <input type="text"
+                       name="price"
+                       value="'.$product->price.'">
+
+                <label>Category</label>
+
+                <select name="cateid">
+    ';
+
+    foreach($categories as $cate){
+
+        $selected = '';
+
+        if($cate->cateid == $product->cateid){
+            $selected = 'selected';
+        }
+
+        $html .= '
+            <option value="'.$cate->cateid.'" '.$selected.'>
+                '.$cate->catename.'
+            </option>
+        ';
     }
+
+    $html .= '
+                </select>
+
+                <label>Brand</label>
+
+                <select name="brandid">
+    ';
+
+    foreach($brands as $brand){
+
+        $selected = '';
+
+        if($brand->id == $product->brandid){
+            $selected = 'selected';
+        }
+
+        $html .= '
+            <option value="'.$brand->id.'" '.$selected.'>
+                '.$brand->brandname.'
+            </option>
+        ';
+    }
+
+    $html .= '
+                </select>
+
+                <button type="submit" class="btn">
+                    Cập nhật Product
+                </button>
+
+            </form>
+
+        </div>
+
+    </body>
+    </html>
+    ';
+
+    return $html;
+}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+public function update(Request $request, string $id)
+{
+    DB::table('products')
+        ->where('id', $id)
+        ->update([
+
+            'productname' => $request->productname,
+            'price' => $request->price,
+            'cateid' => $request->cateid,
+            'brandid' => $request->brandid
+
+        ]);
+
+    return redirect('/admin/products');
+}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+public function destroy(string $id)
+{
+    DB::table('products')
+        ->where('id', $id)
+        ->delete();
+
+    return redirect('/admin/products');
+}
 }
