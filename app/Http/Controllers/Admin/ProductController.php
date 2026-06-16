@@ -311,18 +311,42 @@ public function create()
      */
 public function store(Request $request)
 {
-    DB::table('products')->insert([
+try{
 
-        'productname' => $request->input('productname'),
-        'price'       => (int)$request->input('price'),
-        'cateid'      => $request->input('cateid'),
-        'brandid'     => $request->input('brandid'),
-        'created_at'  => now(),
-        'updated_at'  => now(),
+Product::create([
 
-    ]);
+'productname'=>$request->productname,
 
-    return redirect('/admin/products');
+'price'=>$request->price,
+
+'cateid'=>$request->cateid,
+
+'brandid'=>$request->brandid
+
+]);
+
+return redirect('/admin/products')
+
+->with(
+'success',
+'Thêm thành công'
+);
+
+}
+
+catch(\Exception $e){
+
+return back()
+
+->withInput()
+
+->with(
+'error',
+'Lỗi thêm dữ liệu'
+);
+
+}
+
 }
 
     /**
@@ -338,9 +362,7 @@ public function store(Request $request)
      */
 public function edit(string $id)
 {
-    $product = DB::table('products')
-        ->where('id', $id)
-        ->first();
+    $product = Product::findOrFail($id);
 
     $categories = DB::table('categories')->get();
     $brands = DB::table('brands')->get();
@@ -476,19 +498,49 @@ public function edit(string $id)
      */
 public function update(Request $request, string $id)
 {
-    DB::table('products')
-        ->where('id', $id)
-        ->update([
+try{
 
-        'productname' => $request->productname,
-        'price' => $request->price,
-        'cateid' => $request->cateid,
-        'brandid' => $request->brandid,
-        'updated_at' => now()
+$product =
+Product::findOrFail($id);
+
+$product->update([
+
+'productname'
+=> $request->productname,
+
+'price'
+=> $request->price,
+
+'cateid'
+=> $request->cateid,
+
+'brandid'
+=> $request->brandid
 
 ]);
 
-    return redirect('/admin/products');
+return redirect('/admin/products')
+
+->with(
+'success',
+'Cập nhật thành công'
+);
+
+}
+
+catch(\Exception $e){
+
+return back()
+
+->withInput()
+
+->with(
+'error',
+'Lỗi cập nhật'
+);
+
+}
+
 }
 
     /**
@@ -496,10 +548,10 @@ public function update(Request $request, string $id)
      */
 public function destroy(string $id)
 {
-    DB::table('products')
-        ->where('id', $id)
-        ->delete();
+    Product::findOrFail($id)
+    ->delete();
 
     return redirect('/admin/products');
 }
+
 }
