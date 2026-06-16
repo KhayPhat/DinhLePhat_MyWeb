@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -13,8 +13,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = DB::table('categories')->get();
-
+        $categories = Category::select(
+            'cateid',
+            'catename',
+            'slug',
+            'image',
+            'status'
+)->paginate(10);
         $html = '
         <html>
         <head>
@@ -147,14 +152,16 @@ class CategoryController extends Controller
     </form>
 
 </td>
-    </form>
-</td>
                 </tr>
             ';
         }
 
-        $html .= '
+$html .= '
                 </table>
+
+                <div style="margin-top:20px;">
+                    '.$categories->links()->toHtml().'
+                </div>
 
             </div>
 
@@ -162,7 +169,7 @@ class CategoryController extends Controller
         </html>
         ';
 
-        return $html;
+return $html;
     }
 
     /**
@@ -256,17 +263,15 @@ public function create()
     /**
      * Store a newly created resource in storage.
      */
- public function store(Request $request)
+public function store(Request $request)
 {
-    DB::table('categories')->insert([
+    Category::create([
         'catename' => $request->catename,
         'slug' => $request->slug,
         'image' => null,
         'status' => 1,
         'sort_order' => 0,
         'description' => null,
-        'created_at' => now(),
-        'updated_at' => now()
     ]);
 
     return redirect('/admin/categories');
@@ -279,9 +284,7 @@ public function create()
 
 public function edit(string $id)
 {
-    $category = DB::table('categories')
-        ->where('cateid', $id)
-        ->first();
+    $category = Category::findOrFail($id);
 
     return '
     <html>
@@ -369,22 +372,22 @@ public function edit(string $id)
 
 public function update(Request $request, string $id)
 {
-    DB::table('categories')
-        ->where('cateid', $id)
-        ->update([
-            'catename' => $request->catename,
-            'slug' => $request->slug,
-            'updated_at' => now()
-        ]);
+    $category = Category::findOrFail($id);
+
+    $category->update([
+        'catename' => $request->catename,
+        'slug' => $request->slug,
+        'updated_at' => now()
+    ]);
 
     return redirect('/admin/categories');
 }
 
 public function destroy(string $id)
 {
-    DB::table('categories')
-        ->where('cateid', $id)
-        ->delete();
+    $category = Category::findOrFail($id);
+
+    $category->delete();
 
     return redirect('/admin/categories');
 }

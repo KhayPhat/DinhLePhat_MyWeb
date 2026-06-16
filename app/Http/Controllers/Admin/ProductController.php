@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -13,23 +14,13 @@ class ProductController extends Controller
      */
 public function index()
 {
-$products = DB::table('products')
-    ->join('categories', 'products.cateid', '=', 'categories.cateid')
-    ->leftJoin('brands', 'products.brandid', '=', 'brands.id') 
-    ->select(
-        'products.id',
-        'products.productname',
-        'products.price',
-        'categories.catename',
-        'brands.brandname'
-    )
-    ->get();
+    $products = Product::with(['category', 'brand'])
+                ->paginate(10);
 
     $html = '
     <html>
     <head>
         <title>Danh sách Product</title>
-        
 
         <style>
             body{
@@ -68,27 +59,37 @@ $products = DB::table('products')
         <div class="container">
 
             <h1>Danh sách Product</h1>
-            
-<a 
-    href="/admin/products/create"
-    style="
-        display:inline-block;
-        padding:10px 15px;
-        background:#16a34a;
-        color:white;
-        text-decoration:none;
-        border-radius:5px;
-        margin-bottom:20px;
-    "
->
-    + Thêm Product
-</a>
-<a class="btn-add"
-   href="/admin/dashboard"
-   style="background:#64748b; margin-inline-start:10px;">
-    Quay lại Dashboard
 
-</a>
+            <a
+                href="/admin/products/create"
+                style="
+                    display:inline-block;
+                    padding:10px 15px;
+                    background:#16a34a;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:5px;
+                    margin-bottom:20px;
+                "
+            >
+                + Thêm Product
+            </a>
+
+            <a
+                href="/admin/dashboard"
+                style="
+                    display:inline-block;
+                    padding:10px 15px;
+                    background:#64748b;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:5px;
+                    margin-left:10px;
+                    margin-bottom:20px;
+                "
+            >
+                Quay lại Dashboard
+            </a>
 
             <table>
 
@@ -109,63 +110,70 @@ $products = DB::table('products')
                 <td>'.$item->id.'</td>
                 <td>'.$item->productname.'</td>
                 <td>'.$item->price.'</td>
-                <td>'.$item->catename.'</td>
-                <td>'.$item->brandname.'</td>
+                <td>'.($item->category?->catename ?? '').'</td>
+                <td>'.($item->brand?->brandname ?? '').'</td>
                 <td>
-    <a
-        href="/admin/products/'.$item->id.'/edit"
-        style="
-            background:#eab308;
-            color:white;
-            padding:6px 10px;
-            text-decoration:none;
-            border-radius:5px;
-        "
-    >
-        Sửa
-    </a>
-    <form 
-    method="POST"
-    action="/admin/products/'.$item->id.'"
-    style="display:inline-block;"
->
 
-    <input type="hidden"
-           name="_token"
-           value="'.csrf_token().'">
+                    <a
+                        href="/admin/products/'.$item->id.'/edit"
+                        style="
+                            background:#eab308;
+                            color:white;
+                            padding:6px 10px;
+                            text-decoration:none;
+                            border-radius:5px;
+                        "
+                    >
+                        Sửa
+                    </a>
 
-    <input type="hidden"
-           name="_method"
-           value="DELETE">
+                    <form
+                        method="POST"
+                        action="/admin/products/'.$item->id.'"
+                        style="display:inline-block;"
+                    >
 
-    <button
-        type="submit"
-        style="
-            background:#dc2626;
-            color:white;
-            padding:6px 10px;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-        "
-    >
-        Xóa
-    </button>
+                        <input type="hidden"
+                               name="_token"
+                               value="'.csrf_token().'">
 
-</form>
-</td>
+                        <input type="hidden"
+                               name="_method"
+                               value="DELETE">
+
+                        <button
+                            type="submit"
+                            style="
+                                background:#dc2626;
+                                color:white;
+                                padding:6px 10px;
+                                border:none;
+                                border-radius:5px;
+                                cursor:pointer;
+                            "
+                        >
+                            Xóa
+                        </button>
+
+                    </form>
+
+                </td>
             </tr>
         ';
     }
 
     $html .= '
-            </table>
+        </table>
 
-        </div>
+    <div style="margin-top:20px;">
+        '.$products->links()->toHtml().'
+    </div>
 
-    </body>
-    </html>
-    ';
+    </div>
+
+</body>
+</html>
+';
 
     return $html;
 }
@@ -272,12 +280,19 @@ public function create()
                 <button type="submit" class="btn">
                     Lưu Product
                 </button>
-                <a class="btn-add"
-   href="/admin/dashboard"
-   style="background:#64748b; margin-left:10px;">
-
-    Quay lại 
-
+    <a
+    href="/admin/dashboard"
+    style="
+        display:inline-block;
+        padding:10px 15px;
+        background:#64748b;
+        color:white;
+        text-decoration:none;
+        border-radius:5px;
+        margin-left:10px;
+    "
+>
+    Quay lại Dashboard
 </a>
 
             </form>
@@ -298,11 +313,12 @@ public function store(Request $request)
 {
     DB::table('products')->insert([
 
-        'productname' => $request->productname,
-        'price' => $request->price,
-        'cateid' => $request->cateid,
-        'brandid' => $request->brandid,
-        'created_at' => now()
+        'productname' => $request->input('productname'),
+        'price'       => (int)$request->input('price'),
+        'cateid'      => $request->input('cateid'),
+        'brandid'     => $request->input('brandid'),
+        'created_at'  => now(),
+        'updated_at'  => now(),
 
     ]);
 
@@ -464,12 +480,13 @@ public function update(Request $request, string $id)
         ->where('id', $id)
         ->update([
 
-            'productname' => $request->productname,
-            'price' => $request->price,
-            'cateid' => $request->cateid,
-            'brandid' => $request->brandid
+        'productname' => $request->productname,
+        'price' => $request->price,
+        'cateid' => $request->cateid,
+        'brandid' => $request->brandid,
+        'updated_at' => now()
 
-        ]);
+]);
 
     return redirect('/admin/products');
 }

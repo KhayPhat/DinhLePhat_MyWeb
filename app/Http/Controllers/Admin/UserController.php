@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -14,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = DB::table('users')->get();
+        $users = User::paginate(10);
 
         $html = '
         <html>
@@ -115,7 +116,7 @@ class UserController extends Controller
         Sửa
     </a>
     <form method="POST"
-      action="/admin/brands/'.$item->id.'"
+      action="/admin/users/'.$item->id.'"
       style="display:inline-block;">
 
     <input type="hidden"
@@ -136,14 +137,18 @@ class UserController extends Controller
             ';
         }
 
-        $html .= '
-            </table>
+    $html .= '
+    </table>
 
-        </div>
+    <div style="margin-top:20px;">
+        '.$users->links()->toHtml().'
+    </div>
 
-        </body>
-        </html>
-        ';
+</div>
+
+</body>
+</html>
+';
 
         return $html;
     }
@@ -244,19 +249,17 @@ class UserController extends Controller
 
 public function store(Request $request)
 {
-    DB::table('users')->insert([
+    User::create([
         'fullname' => $request->fullname,
         'username' => $request->username,
         'email' => $request->email,
-        'password' => $request->password,
+        'password' => bcrypt($request->password),  
         'phone' => $request->phone,
         'address' => '',
         'gender' => 1,
         'birthday' => '2000-01-01',
         'role' => 1,
         'status' => 1,
-        'created_at' => now(),
-        'updated_at' => now()
     ]);
 
     return redirect('/admin/users');

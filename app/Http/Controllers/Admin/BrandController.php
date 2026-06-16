@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Brand;
 
 class BrandController extends Controller
 {
@@ -13,8 +13,11 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = DB::table('brands')->get();
-
+        $brands = Brand::select(
+            'id',
+            'brandname',
+            'slug'
+)->paginate(10);
         $html = '
         <html>
         <head>
@@ -161,14 +164,18 @@ class BrandController extends Controller
             ';
         }
 
-        $html .= '
-            </table>
+$html .= '
+    </table>
 
-        </div>
+    <div style="margin-top:20px;">
+        '.$brands->links()->toHtml().'
+    </div>
 
-        </body>
-        </html>
-        ';
+</div>
+
+</body>
+</html>
+';
 
         return $html;
     }
@@ -280,24 +287,19 @@ class BrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        DB::table('brands')->insert([
+public function store(Request $request)
+{
+    Brand::create([
+        'brandname' => $request->brandname,
+        'slug' => $request->slug,
+        'image' => null,
+        'status' => 1,
+        'sort_order' => 0,
+        'description' => null,
+    ]);
 
-            'brandname' => $request->brandname,
-            'slug' => $request->slug,
-            'image' => null,
-            'status' => 1,
-            'sort_order' => 0,
-            'description' => null,
-            'created_at' => now(),
-            'updated_at' => now()
-
-        ]);
-
-        return redirect('/admin/brands');
-    }
-
+    return redirect('/admin/brands');
+}
     /**
      * Display the specified resource.
      */
@@ -311,9 +313,7 @@ class BrandController extends Controller
      */
     public function edit(string $id)
     {
-        $brand = DB::table('brands')
-            ->where('id', $id)
-            ->first();
+        $brand = Brand::findOrFail($id);
 
         return '
         <html>
@@ -413,7 +413,6 @@ class BrandController extends Controller
                     </a>
 
                 </form>
-
             </div>
 
         </body>
@@ -424,30 +423,28 @@ class BrandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        DB::table('brands')
-            ->where('id', $id)
-            ->update([
+public function update(Request $request, string $id)
+{
+    $brand = Brand::findOrFail($id);
 
-                'brandname' => $request->brandname,
-                'slug' => $request->slug,
-                'updated_at' => now()
+    $brand->update([
+        'brandname' => $request->brandname,
+        'slug' => $request->slug,
+        'updated_at' => now()
+    ]);
 
-            ]);
-
-        return redirect('/admin/brands');
-    }
+    return redirect('/admin/brands');
+}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        DB::table('brands')
-            ->where('id', $id)
-            ->delete();
+public function destroy(string $id)
+{
+    $brand = Brand::findOrFail($id);
 
-        return redirect('/admin/brands');
-    }
+    $brand->delete();
+
+    return redirect('/admin/brands');
+}
 }
