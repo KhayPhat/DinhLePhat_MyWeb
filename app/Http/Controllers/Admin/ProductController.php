@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Http\Requests\Admin\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -229,10 +230,43 @@ public function create()
 
         <div class="container">
 
-            <h2>Thêm Product</h2>
+<h2>Thêm Product</h2>
 
-            <form method="POST" action="/admin/products">
+'.
 
+(
+session("errors")
+
+?
+
+'<div
+style="
+background:#fecaca;
+color:#991b1b;
+padding:12px;
+margin-bottom:15px;
+border-radius:8px;
+"
+>
+
+'
+
+.implode(
+'<br>',
+session("errors")->all()
+)
+
+.'
+
+</div>'
+
+:''
+
+)
+
+.'
+
+<form method="POST" action="/admin/products">
                 <input type="hidden"
                        name="_token"
                        value="'.csrf_token().'">
@@ -309,44 +343,25 @@ public function create()
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
+public function store(ProductRequest $request)
 {
-try{
+    Product::create([
 
-Product::create([
+        'productname' => $request->productname,
 
-'productname'=>$request->productname,
+        'price' => $request->price,
 
-'price'=>$request->price,
+        'cateid' => $request->cateid,
 
-'cateid'=>$request->cateid,
+        'brandid' => $request->brandid
 
-'brandid'=>$request->brandid
+    ]);
 
-]);
-
-return redirect('/admin/products')
-
-->with(
-'success',
-'Thêm thành công'
-);
-
-}
-
-catch(\Exception $e){
-
-return back()
-
-->withInput()
-
-->with(
-'error',
-'Lỗi thêm dữ liệu'
-);
-
-}
-
+    return redirect('/admin/products')
+        ->with(
+            'success',
+            'Thêm thành công'
+        );
 }
 
     /**
@@ -496,7 +511,7 @@ public function edit(string $id)
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, string $id)
+public function update(ProductRequest $request, string $id)
 {
 try{
 

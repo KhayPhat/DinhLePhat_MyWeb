@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
     <title>Danh sách Product</title>
 
     <style>
+
         body{
             font-family:Arial;
             background:#f1f5f9;
@@ -47,6 +50,7 @@
         .back{
             background:#64748b;
         }
+
     </style>
 
 </head>
@@ -57,12 +61,20 @@
 
 <h1>Danh sách Product</h1>
 
-<a href="/admin/products/create" class="btn add">
+<x-admin.alert />
+
+<a href="/admin/products/create"
+class="btn add">
+
 + Thêm Product
+
 </a>
 
-<a href="/admin/dashboard" class="btn back">
+<a href="/admin/dashboard"
+class="btn back">
+
 Quay lại Dashboard
+
 </a>
 
 <br><br>
@@ -70,26 +82,32 @@ Quay lại Dashboard
 <table>
 
 <tr>
-    <th>ID</th>
-    <th>Tên sản phẩm</th>
-    <th>Giá</th>
-    <th>Category</th>
-    <th>Brand</th>
+
+<th>ID</th>
+
+<th>Tên sản phẩm</th>
+
+<th>Giá</th>
+
+<th>Category</th>
+
+<th>Brand</th>
+
 </tr>
 
 @foreach($list as $item)
 
 <tr>
 
-    <td>{{ $item->id }}</td>
+<td>{{ $item->id }}</td>
 
-    <td>{{ $item->productname }}</td>
+<td>{{ $item->productname }}</td>
 
-    <td>{{ $item->price }}</td>
+<td>{{ $item->price }}</td>
 
-    <td>{{ $item->category?->catename }}</td>
+<td>{{ $item->category?->catename }}</td>
 
-    <td>{{ $item->brand?->brandname }}</td>
+<td>{{ $item->brand?->brandname }}</td>
 
 </tr>
 
@@ -104,4 +122,5 @@ Quay lại Dashboard
 </div>
 
 </body>
+
 </html>

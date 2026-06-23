@@ -13,29 +13,26 @@ class Product extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'name',
-        'slug',
-        'image',
-        'detail',
-        'description',
+
+        'productname',
+
         'price',
-        'pricesale',
-        'qty',
-        'catid',
-        'brandid',
-        'status'
+
+        'cateid',
+
+        'brandid'
+
     ];
 
     // Quan hệ Category
     public function category()
     {
-        return $this->belongsTo(Category::class, 'catid', 'id');
+        return $this->belongsTo(Category::class,'cateid','cateid');
     }
 
     // Quan hệ Brand
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brandid', 'id');
+        return $this->belongsTo(Brand::class,'brandid','id');
     }
-    
 }

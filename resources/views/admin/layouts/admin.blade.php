@@ -36,7 +36,15 @@
             <!-- Nội dung -->
             <main class="flex-grow-1 bg-light p-3">
 
-                @yield('content')
+                <iframe
+name="contentFrame"
+style="
+width:100%;
+height:100%;
+border:none;
+min-height:700px;
+"
+></iframe>
 
             </main>
 

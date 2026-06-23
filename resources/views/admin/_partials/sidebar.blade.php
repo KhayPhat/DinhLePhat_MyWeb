@@ -1,174 +1,190 @@
 <div class="admin-sidebar bg-dark text-white p-3 vh-100">
 
-    <h4 class="mb-4">
-        Admin
-    </h4>
+<h4 class="mb-4">
+    Admin
+</h4>
 
-    <ul class="nav flex-column">
+<ul class="nav flex-column">
 
-        <!-- DASHBOARD -->
-        <li class="nav-item">
-            <a class="nav-link text-white" href="{{ route('admin.home') }}">
-                Dashboard
-            </a>
-        </li>
+    <!-- DASHBOARD -->
+    <li class="nav-item">
+        <a
+            class="nav-link text-white"
+            href="{{ route('admin.home') }}"
+            target="contentFrame"
+        >
+            Dashboard
+        </a>
+    </li>
 
-        <!-- CATEGORY -->
-        <li class="nav-item">
 
-            <a class="nav-link text-white"
-               data-bs-toggle="collapse"
-               href="#categoryMenu">
+    <!-- CATEGORY -->
+    <li class="nav-item">
 
-                Quản lý danh mục
+        <a
+            class="nav-link text-white"
+            data-bs-toggle="collapse"
+            href="#categoryMenu"
+        >
+            Quản lý danh mục
+        </a>
 
-            </a>
+        <div class="collapse" id="categoryMenu">
 
-            <div class="collapse" id="categoryMenu">
+            <ul class="nav flex-column ms-3">
 
-                <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('categories.index') }}"
+                        target="contentFrame"
+                    >
+                        Danh sách loại sản phẩm
+                    </a>
+                </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('categories.index') }}">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('categories.create') }}"
+                        target="contentFrame"
+                    >
+                        Thêm loại sản phẩm
+                    </a>
+                </li>
 
-                            Danh sách loại sản phẩm
+            </ul>
 
-                        </a>
-                    </li>
+        </div>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('categories.create') }}">
+    </li>
 
-                            Thêm loại sản phẩm
 
-                        </a>
-                    </li>
+    <!-- BRAND -->
+    <li class="nav-item">
 
-                </ul>
+        <a
+            class="nav-link text-white"
+            data-bs-toggle="collapse"
+            href="#brandMenu"
+        >
+            Quản lý Brand
+        </a>
 
-            </div>
+        <div class="collapse" id="brandMenu">
 
-        </li>
+            <ul class="nav flex-column ms-3">
 
-        <!-- BRAND -->
-        <li class="nav-item">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('brands.index') }}"
+                        target="contentFrame"
+                    >
+                        Danh sách Brand
+                    </a>
+                </li>
 
-            <a class="nav-link text-white"
-               data-bs-toggle="collapse"
-               href="#brandMenu">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('brands.create') }}"
+                        target="contentFrame"
+                    >
+                        Thêm Brand
+                    </a>
+                </li>
 
-                Quản lý Brand
+            </ul>
 
-            </a>
+        </div>
 
-            <div class="collapse" id="brandMenu">
+    </li>
 
-                <ul class="nav flex-column ms-3">
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('brands.index') }}">
+    <!-- USER -->
+    <li class="nav-item">
 
-                            Danh sách Brand
+        <a
+            class="nav-link text-white"
+            data-bs-toggle="collapse"
+            href="#userMenu"
+        >
+            Quản lý User
+        </a>
 
-                        </a>
-                    </li>
+        <div class="collapse" id="userMenu">
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('brands.create') }}">
+            <ul class="nav flex-column ms-3">
 
-                            Thêm Brand
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('users.index') }}"
+                        target="contentFrame"
+                    >
+                        Danh sách User
+                    </a>
+                </li>
 
-                        </a>
-                    </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('users.create') }}"
+                        target="contentFrame"
+                    >
+                        Thêm User
+                    </a>
+                </li>
 
-                </ul>
+            </ul>
 
-            </div>
+        </div>
 
-        </li>
+    </li>
 
-        <!-- USER -->
-        <li class="nav-item">
 
-            <a class="nav-link text-white"
-               data-bs-toggle="collapse"
-               href="#userMenu">
+    <!-- PRODUCT -->
+    <li class="nav-item">
 
-                Quản lý User
+        <a
+            class="nav-link text-white"
+            data-bs-toggle="collapse"
+            href="#productMenu"
+        >
+            Quản lý Product
+        </a>
 
-            </a>
+        <div class="collapse" id="productMenu">
 
-            <div class="collapse" id="userMenu">
+            <ul class="nav flex-column ms-3">
 
-                <ul class="nav flex-column ms-3">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('products.index') }}"
+                        target="contentFrame"
+                    >
+                        Danh sách Product
+                    </a>
+                </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('users.index') }}">
+                <li class="nav-item">
+                    <a
+                        class="nav-link text-white"
+                        href="{{ route('products.create') }}"
+                        target="contentFrame"
+                    >
+                        Thêm Product
+                    </a>
+                </li>
 
-                            Danh sách User
+            </ul>
 
-                        </a>
-                    </li>
+        </div>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('users.create') }}">
+    </li>
 
-                            Thêm User
-
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-        </li>
-
-        <!-- PRODUCT -->
-        <li class="nav-item">
-
-            <a class="nav-link text-white"
-               data-bs-toggle="collapse"
-               href="#productMenu">
-
-                Quản lý Product
-
-            </a>
-
-            <div class="collapse" id="productMenu">
-
-                <ul class="nav flex-column ms-3">
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('products.index') }}">
-
-                            Danh sách Product
-
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
-                           href="{{ route('products.create') }}">
-
-                            Thêm Product
-
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-        </li>
-
-    </ul>
+</ul>
 
 </div>
