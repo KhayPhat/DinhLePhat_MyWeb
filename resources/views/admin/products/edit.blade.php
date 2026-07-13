@@ -4,42 +4,34 @@
 
 <div class="container">
 
-    <h2>Thêm Product</h2>
+    <h2>Sửa Product</h2>
 
     <x-admin.alert />
 
-    <form method="POST"
-          action="{{ route('products.store') }}"
-          enctype="multipart/form-data">
+    <form method="POST" action="{{ route('products.update',$product->id) }}">
 
         @csrf
+        @method('PUT')
 
         <div class="mb-3">
-
             <label>Tên sản phẩm</label>
-
             <input
                 type="text"
                 name="productname"
                 class="form-control"
-                value="{{ old('productname') }}">
-
+                value="{{ old('productname',$product->productname) }}">
         </div>
 
         <div class="mb-3">
-
             <label>Giá</label>
-
             <input
-                type="number"
+                type="text"
                 name="price"
                 class="form-control"
-                value="{{ old('price') }}">
-
+                value="{{ old('price',$product->price) }}">
         </div>
 
         <div class="mb-3">
-
             <label>Category</label>
 
             <select
@@ -48,7 +40,9 @@
 
                 @foreach($categories as $cate)
 
-                    <option value="{{ $cate->cateid }}">
+                    <option
+                        value="{{ $cate->cateid }}"
+                        {{ old('cateid',$product->cateid)==$cate->cateid ? 'selected' : '' }}>
 
                         {{ $cate->catename }}
 
@@ -70,7 +64,9 @@
 
                 @foreach($brands as $brand)
 
-                    <option value="{{ $brand->id }}">
+                    <option
+                        value="{{ $brand->id }}"
+                        {{ old('brandid',$product->brandid)==$brand->id ? 'selected' : '' }}>
 
                         {{ $brand->brandname }}
 
@@ -82,31 +78,13 @@
 
         </div>
 
-        <div class="mb-3">
-
-            <label>Hình ảnh</label>
-
-            <input
-                type="file"
-                name="images[]"
-                class="form-control"
-                multiple>
-
-        </div>
-
-        <button
-            type="submit"
-            class="btn btn-primary">
-
-            Thêm Product
-
+        <button class="btn btn-primary">
+            Cập nhật Product
         </button>
 
         <a href="{{ route('products.index') }}"
            class="btn btn-secondary">
-
             Quay lại
-
         </a>
 
     </form>

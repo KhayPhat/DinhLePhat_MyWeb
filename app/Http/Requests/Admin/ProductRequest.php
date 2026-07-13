@@ -15,23 +15,23 @@ class ProductRequest extends FormRequest
     }
 
     public function rules(): array
-    {
-        return [
+{
+    return [
 
-            'productname'
-            => 'required|min:5|max:100',
+        'productname'
+        => 'required|min:5|max:100',
 
-            'price'
-            => 'required|numeric|min:0|max:10000000',
+        'price'
+        => 'required|numeric|min:0|max:10000000',
 
-            'cateid'
-            => 'required|exists:categories,cateid',
+        'cateid'
+        => 'required|exists:categories,cateid',
 
-            'brandid'
-            => 'required|exists:brands,id'
+        'brandid'
+        => 'required|exists:brands,id'
 
-        ];
-    }
+    ];
+}
 
     public function messages(): array
     {

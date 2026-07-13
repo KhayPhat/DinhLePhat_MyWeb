@@ -1,126 +1,102 @@
-<!DOCTYPE html>
-<html>
+@extends('admin.layouts.admin')
 
-<head>
-
-    <title>Danh sách Product</title>
-
-    <style>
-
-        body{
-            font-family:Arial;
-            background:#f1f5f9;
-            padding:30px;
-        }
-
-        .container{
-            max-width:1200px;
-            margin:auto;
-            background:white;
-            padding:30px;
-            border-radius:15px;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
-
-        th,td{
-            border:1px solid #ccc;
-            padding:10px;
-        }
-
-        th{
-            background:#2563eb;
-            color:white;
-        }
-
-        .btn{
-            padding:8px 12px;
-            text-decoration:none;
-            border-radius:5px;
-            color:white;
-        }
-
-        .add{
-            background:#16a34a;
-        }
-
-        .back{
-            background:#64748b;
-        }
-
-    </style>
-
-</head>
-
-<body>
+@section('content')
 
 <div class="container">
 
-<h1>Danh sách Product</h1>
+    <h1>Danh sách Product</h1>
 
-<x-admin.alert />
+    <x-admin.alert />
 
-<a href="/admin/products/create"
-class="btn add">
+    <a href="/admin/products/create" class="btn btn-success"">
+        + Thêm Product
+    </a>
 
-+ Thêm Product
+    <a href="/admin/dashboard" class="btn btn-secondary"">
+        Quay lại Dashboard
+    </a>
 
-</a>
+    <br><br>
 
-<a href="/admin/dashboard"
-class="btn back">
+    <table class="table table-bordered">
 
-Quay lại Dashboard
+    <tr>
+        <th>ID</th>
+        <th>Tên sản phẩm</th>
+        <th>Giá</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Hình ảnh</th>
+        <th>Chức năng</th>
+    </tr>
 
-</a>
+    @foreach($products as $item)
 
-<br><br>
+    <tr>
 
-<table>
+        <td>{{ $item->id }}</td>
 
-<tr>
+        <td>{{ $item->productname }}</td>
 
-<th>ID</th>
+        <td>{{ $item->price }}</td>
 
-<th>Tên sản phẩm</th>
+        <td>{{ $item->category?->catename }}</td>
 
-<th>Giá</th>
+        <td>{{ $item->brand?->brandname }}</td>
 
-<th>Category</th>
+        <td>
 
-<th>Brand</th>
+            @foreach($item->images as $img)
 
-</tr>
+                <img
+                    src="{{ asset('storage/'.$img->image) }}"
+                    width="80"
+                    class="me-2 rounded">
 
-@foreach($list as $item)
+            @endforeach
 
-<tr>
+        </td>
 
-<td>{{ $item->id }}</td>
+        <td>
 
-<td>{{ $item->productname }}</td>
+            <a
+                href="{{ route('products.edit',$item->id) }}"
+                class="btn btn-warning btn-sm">
 
-<td>{{ $item->price }}</td>
+                Sửa
 
-<td>{{ $item->category?->catename }}</td>
+            </a>
 
-<td>{{ $item->brand?->brandname }}</td>
+            <form
+                action="{{ route('products.destroy',$item->id) }}"
+                method="POST"
+                style="display:inline;">
 
-</tr>
+                @csrf
+                @method('DELETE')
 
-@endforeach
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Xóa sản phẩm?')">
+
+                    Xóa
+
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+    @endforeach
 
 </table>
 
-<br>
+    <br>
 
-{{ $list->links() }}
+    {{ $products->links() }}
 
 </div>
 
-</body>
-
-</html>
+@endsection
