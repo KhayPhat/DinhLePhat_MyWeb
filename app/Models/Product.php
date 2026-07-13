@@ -12,17 +12,19 @@ class Product extends Model
 
     public $timestamps = true;
 
-protected $fillable = [
+    protected $fillable = [
 
-    'productname',
+        'productname',
 
-    'price',
+        'price',
 
-    'cateid',
+        'cateid',
 
-    'brandid'
+        'brandid',
 
-];
+        'image'
+
+    ];
 
     // Quan hệ Category
     public function category()

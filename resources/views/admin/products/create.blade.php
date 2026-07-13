@@ -82,13 +82,26 @@
 
         </div>
 
+        {{-- Ảnh đại diện --}}
         <div class="mb-3">
 
-            <label>Hình ảnh</label>
+            <label>Hình ảnh đại diện</label>
 
             <input
                 type="file"
-                name="images[]"
+                name="img"
+                class="form-control">
+
+        </div>
+
+        {{-- Ảnh phụ --}}
+        <div class="mb-3">
+
+            <label>Hình ảnh phụ</label>
+
+            <input
+                type="file"
+                name="imgs[]"
                 class="form-control"
                 multiple>
 

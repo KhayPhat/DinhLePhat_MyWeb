@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
@@ -15,42 +14,42 @@ class ProductRequest extends FormRequest
     }
 
     public function rules(): array
-{
-    return [
+    {
+        return [
 
-        'productname'
-        => 'required|min:5|max:100',
+            'productname' => 'required|min:5|max:100',
 
-        'price'
-        => 'required|numeric|min:0|max:10000000',
+            'price' => 'required|numeric|min:0|max:10000000',
 
-        'cateid'
-        => 'required|exists:categories,cateid',
+            'cateid' => 'required|exists:categories,cateid',
 
-        'brandid'
-        => 'required|exists:brands,id'
+            'brandid' => 'required|exists:brands,id',
 
-    ];
-}
+            // Lab 10
+            'img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            'imgs.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+        ];
+    }
 
     public function messages(): array
     {
         return [
 
-            'required'
-            => ':attribute không được để trống',
+            'required' => ':attribute không được để trống',
 
-            'min'
-            => ':attribute tối thiểu :min ký tự',
+            'min' => ':attribute tối thiểu :min ký tự',
 
-            'max'
-            => ':attribute tối đa :max ký tự',
+            'max' => ':attribute tối đa :max ký tự',
 
-            'numeric'
-            => ':attribute phải là số',
+            'numeric' => ':attribute phải là số',
 
-            'exists'
-            => ':attribute không tồn tại'
+            'exists' => ':attribute không tồn tại',
+
+            'image' => ':attribute phải là hình ảnh',
+
+            'mimes' => ':attribute phải có định dạng jpg, jpeg, png hoặc webp',
 
         ];
     }
@@ -59,31 +58,29 @@ class ProductRequest extends FormRequest
     {
         return [
 
-            'productname'
-            => 'Tên sản phẩm',
+            'productname' => 'Tên sản phẩm',
 
-            'price'
-            => 'Giá',
+            'price' => 'Giá',
 
-            'cateid'
-            => 'Loại sản phẩm',
+            'cateid' => 'Loại sản phẩm',
 
-            'brandid'
-            => 'Thương hiệu'
+            'brandid' => 'Thương hiệu',
+
+            'img' => 'Hình ảnh đại diện',
+
+            'imgs.*' => 'Hình ảnh phụ',
 
         ];
     }
 
-    protected function failedValidation(
-        Validator $validator
-    )
+    protected function failedValidation(Validator $validator)
     {
         throw new ValidationException(
             $validator,
             redirect()
-            ->back()
-            ->withErrors($validator)
-            ->withInput()
+                ->back()
+                ->withErrors($validator)
+                ->withInput()
         );
     }
 }

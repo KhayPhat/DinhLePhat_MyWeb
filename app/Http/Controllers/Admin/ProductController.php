@@ -48,39 +48,54 @@ public function create()
      */
 public function store(ProductRequest $request)
 {
-$product = Product::create([
+    $image = null;
 
-    'productname' => $request->productname,
+    // Upload ảnh đại diện
+    if ($request->hasFile('img')) {
 
-    'price' => $request->price,
+        $image = $request->file('img')->store(
+            'products',
+            'public'
+        );
+    }
 
-    'cateid' => $request->cateid,
+    // Lưu Product
+    $product = Product::create([
 
-    'brandid' => $request->brandid,
+        'productname' => $request->productname,
 
-]);
+        'price' => $request->price,
 
-    if($request->hasFile('images')){
+        'cateid' => $request->cateid,
 
-        foreach($request->file('images') as $file){
+        'brandid' => $request->brandid,
 
-            $path =
-            $file->store(
+        'image' => $image
+
+    ]);
+
+    // Upload ảnh phụ
+    if ($request->hasFile('imgs')) {
+
+        foreach ($request->file('imgs') as $file) {
+
+            $path = $file->store(
                 'products',
                 'public'
             );
 
             ProductImage::create([
 
-                'product_id'=>$product->id,
+                'product_id' => $product->id,
 
-                'image'=>$path
+                'image' => $path
 
             ]);
         }
     }
 
-    return redirect('/admin/products');
+    return redirect('/admin/products')
+        ->with('success', 'Thêm Product thành công');
 }
     /**
      * Display the specified resource.
@@ -116,49 +131,68 @@ public function edit(string $id)
      */
 public function update(ProductRequest $request, string $id)
 {
-try{
+    try{
 
-$product =
-Product::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-$product->update([
+        // Nếu có đổi ảnh đại diện
+        if($request->hasFile('img')){
 
-'productname'
-=> $request->productname,
+            $image = $request->file('img')->store(
+                'products',
+                'public'
+            );
 
-'price'
-=> $request->price,
+            $product->image = $image;
+        }
 
-'cateid'
-=> $request->cateid,
+        $product->productname = $request->productname;
 
-'brandid'
-=> $request->brandid
+        $product->price = $request->price;
 
-]);
+        $product->cateid = $request->cateid;
 
-return redirect('/admin/products')
+        $product->brandid = $request->brandid;
 
-->with(
-'success',
-'Cập nhật thành công'
-);
+        $product->save();
 
-}
+        // Nếu có thêm ảnh phụ
+        if($request->hasFile('imgs')){
 
-catch(\Exception $e){
+            foreach($request->file('imgs') as $file){
 
-return back()
+                $path = $file->store(
+                    'products',
+                    'public'
+                );
 
-->withInput()
+                ProductImage::create([
 
-->with(
-'error',
-'Lỗi cập nhật'
-);
+                    'product_id' => $product->id,
 
-}
+                    'image' => $path
 
+                ]);
+            }
+        }
+
+        return redirect('/admin/products')
+            ->with(
+                'success',
+                'Cập nhật thành công'
+            );
+
+    }
+    catch(\Exception $e){
+
+        return back()
+            ->withInput()
+            ->with(
+                'error',
+                'Lỗi cập nhật'
+            );
+
+    }
 }
 
     /**

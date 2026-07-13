@@ -8,11 +8,11 @@
 
     <x-admin.alert />
 
-    <a href="/admin/products/create" class="btn btn-success"">
+    <a href="{{ route('products.create') }}" class="btn btn-success">
         + Thêm Product
     </a>
 
-    <a href="/admin/dashboard" class="btn btn-secondary"">
+    <a href="/admin/dashboard" class="btn btn-secondary">
         Quay lại Dashboard
     </a>
 
@@ -20,80 +20,92 @@
 
     <table class="table table-bordered">
 
-    <tr>
-        <th>ID</th>
-        <th>Tên sản phẩm</th>
-        <th>Giá</th>
-        <th>Category</th>
-        <th>Brand</th>
-        <th>Hình ảnh</th>
-        <th>Chức năng</th>
-    </tr>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Ảnh đại diện</th>
+            <th>Ảnh phụ</th>
+            <th>Chức năng</th>
+        </tr>
 
-    @foreach($products as $item)
+        @foreach($products as $item)
 
-    <tr>
+        <tr>
 
-        <td>{{ $item->id }}</td>
+            <td>{{ $item->id }}</td>
 
-        <td>{{ $item->productname }}</td>
+            <td>{{ $item->productname }}</td>
 
-        <td>{{ $item->price }}</td>
+            <td>{{ $item->price }}</td>
 
-        <td>{{ $item->category?->catename }}</td>
+            <td>{{ $item->category?->catename }}</td>
 
-        <td>{{ $item->brand?->brandname }}</td>
+            <td>{{ $item->brand?->brandname }}</td>
 
-        <td>
+            <td>
 
-            @foreach($item->images as $img)
+                @if($item->image)
 
-                <img
-                    src="{{ asset('storage/'.$img->image) }}"
-                    width="80"
-                    class="me-2 rounded">
+                    <img
+                        src="{{ asset('storage/'.$item->image) }}"
+                        width="80"
+                        class="rounded">
 
-            @endforeach
+                @endif
 
-        </td>
+            </td>
 
-        <td>
+            <td>
 
-            <a
-                href="{{ route('products.edit',$item->id) }}"
-                class="btn btn-warning btn-sm">
+                @foreach($item->images as $img)
 
-                Sửa
+                    <img
+                        src="{{ asset('storage/'.$img->image) }}"
+                        width="80"
+                        class="me-2 rounded">
 
-            </a>
+                @endforeach
 
-            <form
-                action="{{ route('products.destroy',$item->id) }}"
-                method="POST"
-                style="display:inline;">
+            </td>
 
-                @csrf
-                @method('DELETE')
+            <td>
 
-                <button
-                    class="btn btn-danger btn-sm"
-                    onclick="return confirm('Xóa sản phẩm?')">
+                <a
+                    href="{{ route('products.edit',$item->id) }}"
+                    class="btn btn-warning btn-sm">
 
-                    Xóa
+                    Sửa
 
-                </button>
+                </a>
 
-            </form>
+                <form
+                    action="{{ route('products.destroy',$item->id) }}"
+                    method="POST"
+                    style="display:inline;">
 
-        </td>
+                    @csrf
+                    @method('DELETE')
 
-    </tr>
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Xóa sản phẩm?')">
 
-    @endforeach
+                        Xóa
 
-</table>
+                    </button>
 
-    <br>
+                </form>
+
+            </td>
+
+        </tr>
+
+        @endforeach
+
+    </table>
 
     {{ $products->links() }}
 
