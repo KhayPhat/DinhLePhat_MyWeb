@@ -49,16 +49,48 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.home');
-    Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->name('admin.home');
 
-// Đổi mật khẩu
-Route::get('/admin/change-password', [ChangePasswordController::class, 'index'])
-    ->name('change-password');
+    /*
+    |--------------------------------------------------------------------------
+    | Đổi mật khẩu
+    |--------------------------------------------------------------------------
+    */
 
-Route::post('/admin/change-password', [ChangePasswordController::class, 'update'])
-    ->name('change-password.update');
+    Route::get('/admin/change-password', [ChangePasswordController::class, 'index'])
+        ->name('change-password');
+
+    Route::post('/admin/change-password', [ChangePasswordController::class, 'update'])
+        ->name('change-password.update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Trash Category
+    |--------------------------------------------------------------------------
+    */
+
+    // Danh sách thùng rác
+    Route::get(
+        '/admin/trash/categories',
+        [CategoryController::class, 'trash']
+    )->name('categories.trash');
+
+    // Khôi phục
+    Route::put(
+        '/admin/categories/{id}/restore',
+        [CategoryController::class, 'restore']
+    )->name('categories.restore');
+
+    // Xóa vĩnh viễn
+    Route::delete(
+        '/admin/categories/{id}/force-delete',
+        [CategoryController::class, 'forceDelete']
+    )->name('categories.forceDelete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resource
+    |--------------------------------------------------------------------------
+    */
 
     Route::resource('admin/categories', CategoryController::class);
 

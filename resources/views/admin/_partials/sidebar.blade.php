@@ -52,6 +52,15 @@
                         Thêm loại sản phẩm
                     </a>
                 </li>
+                <li class="nav-item">
+    <a
+        class="nav-link text-white"
+        href="{{ route('categories.trash') }}"
+        target="contentFrame"
+    >
+        🗑 Thùng rác
+    </a>
+</li>
 
             </ul>
 
