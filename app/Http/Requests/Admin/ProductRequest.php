@@ -26,9 +26,9 @@ class ProductRequest extends FormRequest
             'brandid' => 'required|exists:brands,id',
 
             // Lab 10
-            'img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
 
-            'imgs.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'imgs.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
 
         ];
     }

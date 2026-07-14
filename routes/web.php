@@ -2,10 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ChangePasswordController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,11 +20,52 @@ Route::get('/demo4/{id}', [DemoController::class, 'index4']);
 Route::get('/demo5/{id?}', [DemoController::class, 'index5']);
 Route::get('/demo6/{param1}/{param2}', [DemoController::class, 'index6']);
 
-Route::resource('admin/categories', CategoryController::class);
-Route::resource('admin/brands', BrandController::class);
-Route::resource('admin/users', UserController::class);
-Route::resource('admin/products', ProductController::class);
+/*
+|--------------------------------------------------------------------------
+| Login
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/admin/dashboard', function () {
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+
+    Route::post('/login', [AuthController::class, 'doLogin']);
+
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.home');
+    Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('admin.home');
+
+// Đổi mật khẩu
+Route::get('/admin/change-password', [ChangePasswordController::class, 'index'])
+    ->name('change-password');
+
+Route::post('/admin/change-password', [ChangePasswordController::class, 'update'])
+    ->name('change-password.update');
+
+    Route::resource('admin/categories', CategoryController::class);
+
+    Route::resource('admin/brands', BrandController::class);
+
+    Route::resource('admin/users', UserController::class);
+
+    Route::resource('admin/products', ProductController::class);
+
+});
